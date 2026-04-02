@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using HybridBusinessPOS.Core.Models;
 
 namespace HybridBusinessPOS.Core
 {
@@ -15,54 +16,87 @@ namespace HybridBusinessPOS.Core
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Inventory> Inventories { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
+        public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<Payment> Payments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Fluent API configurations go here
-            base.OnModelCreating(modelBuilder);
+            // Configure Product
+            modelBuilder.Entity<Product>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Price).IsRequired().HasColumnType("decimal(18,2)");
+            });
+
+            // Configure Customer
+            modelBuilder.Entity<Customer>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.FullName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Email).HasMaxLength(100);
+            });
+
+            // Configure Order
+            modelBuilder.Entity<Order>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.OrderDate).IsRequired();
+                entity.HasMany(e => e.OrderItems)
+                    .WithOne(e => e.Order);
+            });
+
+            // Configure OrderItem
+            modelBuilder.Entity<OrderItem>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Quantity).IsRequired();
+                entity.HasOne(e => e.Product)
+                    .WithMany();
+            });
+
+            // Configure Inventory
+            modelBuilder.Entity<Inventory>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.StockLevel).IsRequired();
+                entity.HasOne(e => e.Product)
+                    .WithOne();
+            });
+
+            // Configure Supplier
+            modelBuilder.Entity<Supplier>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+            });
+
+            // Configure PurchaseOrder
+            modelBuilder.Entity<PurchaseOrder>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.OrderDate).IsRequired();
+                entity.HasMany(e => e.PurchasedItems)
+                    .WithOne();
+            });
+
+            // Configure Invoice
+            modelBuilder.Entity<Invoice>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.InvoiceDate).IsRequired();
+                entity.HasOne(e => e.Customer)
+                    .WithMany();
+            });
+
+            // Configure Payment
+            modelBuilder.Entity<Payment>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Amount).IsRequired().HasColumnType("decimal(18,2)");
+                entity.Property(e => e.PaymentDate).IsRequired();
+            });
         }
-    }
-
-    public class Product
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public decimal Price { get; set; }
-        public int Stock { get; set; }
-    }
-
-    public class Customer
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }
-    }
-
-    public class Order
-    {
-        public int Id { get; set; }
-        public DateTime OrderDate { get; set; }
-        public int CustomerId { get; set; }
-        public List<OrderItem> OrderItems { get; set; }
-    }
-
-    public class OrderItem
-    {
-        public int Id { get; set; }
-        public int ProductId { get; set; }
-        public int Quantity { get; set; }
-    }
-
-    public class Inventory
-    {
-        public int Id { get; set; }
-        public int ProductId { get; set; }
-        public int QuantityInStock { get; set; }
-    }
-
-    public class Supplier
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
     }
 }
