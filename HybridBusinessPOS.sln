@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Solution xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Project Name="CoreLibrary" ProjectType="CSharp" ProjectGuid="{A1B2C3D4-E5F6-7A8B-9C0D-E1F2G3H4I5J6}" Path="CoreLibrary\CoreLibrary.csproj">
+    <ProjectConfiguration>
+      <Configuration Name="Debug" />
+      <Configuration Name="Release" />
+    </ProjectConfiguration>
+  </Project>
+  <Project Name="MainWebProject" ProjectType="CSharp" ProjectGuid="{J1K2L3M4-N5O6-P7Q8-R9S0-T1U2V3W4X5Y6}" Path="MainWebProject\MainWebProject.csproj">
+    <ProjectConfiguration>
+      <Configuration Name="Debug" />
+      <Configuration Name="Release" />
+    </ProjectConfiguration>
+  </Project>
+</Solution>
